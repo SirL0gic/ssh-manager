@@ -3,20 +3,39 @@ package main
 import (
 	"fmt"
 	"time"
+	"log"
+	"os"
+	"encoding/json"
 )
 
-type SSHProfile struct{
-	Name string
-	Host string 
-	Port int
-	Username string 
-	Password string
-	Keypath string
-	isActive bool
+type SSHProfile struct {
+	Name     string `json:"name"`
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Keypath  string `json:"keypath"`
+	IsActive bool   `json:"isActive"`
 }
 
 func connectionString(profile SSHProfile) string {
 	return fmt.Sprintf("ssh %s@%s -p %d", profile.Username, profile.Host, profile.Port)
+}
+
+func loadProfiles() []SSHProfile {
+	data,err := os.ReadFile("profiles.json")
+	if err != nil {
+		log.Fatal("Error reading profiles.json", err)
+	}
+
+	var profiles []SSHProfile
+	
+	err = json.Unmarshal(data, &profiles)
+	if err != nil {
+		log.Fatal("Error parsing JSON:", err)
+	}
+
+	return profiles
 }
 
 func main() {
@@ -26,16 +45,4 @@ func main() {
 	fmt.Println(version)
 	fmt.Println("Date & Time:", date_time)
 
-	server1 := SSHProfile {
-		Name: "server-1",
-		Host: "1.1.1.1",
-		Port: 22,
-		Username: "root",
-		Password: "secret123",
-		Keypath: "",
-		isActive: true,
-	}
-
-	fmt.Println(server1)
-	fmt.Println(connectionString(server1))
 }

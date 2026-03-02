@@ -6,6 +6,9 @@ import (
 )
 
 func main() {
-	fmt.Println("SSH Manager v0.0.1")
-	fmt.Println("Date & Time:", time.Now().Format("2006-01-02 15:04:05"))
+	version := "SSH Manager v0.0.1"
+	date_time := time.Now().Format("2006-01-02 15:04:05")
+	
+	fmt.Println(version)
+	fmt.Println("Date & Time:", date_time)
 }

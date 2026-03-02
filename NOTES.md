@@ -13,3 +13,5 @@ In Go, a name is exported if it begins with a capital letter. For example, Pizza
 pizza and pi do not start with a capital letter, so they are not exported.
 
 When importing a package, you can refer only to its exported names. Any "unexported" names are not accessible from outside the package. 
+
+Go handles this differently from Python — no virtual environments needed! When you install a package, it goes to your GOPATH directory (usually C:\Users\abisa\go). Each project's go.mod file tracks its own dependencies, so projects are already isolated. Think of go.mod as your requirements.txt and virtual environment combined into one.

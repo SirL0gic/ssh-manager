@@ -90,7 +90,7 @@ func main() {
 	for i, profile := range profiles {
 		number := i + 1
 		name := profile.Name
-		fmt.Printf("%d. %s", number, name)
+		fmt.Printf("%d. %s\n", number, name)
 	}
 
 	fmt.Println()

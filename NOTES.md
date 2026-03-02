@@ -15,3 +15,10 @@ pizza and pi do not start with a capital letter, so they are not exported.
 When importing a package, you can refer only to its exported names. Any "unexported" names are not accessible from outside the package. 
 
 Go handles this differently from Python — no virtual environments needed! When you install a package, it goes to your GOPATH directory (usually C:\Users\abisa\go). Each project's go.mod file tracks its own dependencies, so projects are already isolated. Think of go.mod as your requirements.txt and virtual environment combined into one.
+
+Let's learn structs — this is how Go handles objects. Go doesn't have classes like Python, it uses structs instead.
+
+Define a struct - like a Python class but just data
+// Create a profile - like instantiating a class
+
+type SSHProfile struct defines the structure — it's your blueprint. The field names are capitalized (Name, Host) — this is important in Go. Capitalized means "exported" (public), lowercase means "unexported" (private). That trailing comma after the last field (IsActive: true,) is required in Go when you write it on multiple lines.

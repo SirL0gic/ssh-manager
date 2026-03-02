@@ -90,8 +90,7 @@ func main() {
 	for i, profile := range profiles {
 		number := i + 1
 		name := profile.Name
-		connection := connectionString(profile)
-		fmt.Printf("%d. %s - %s\n", number, name, connection)
+		fmt.Printf("%d. %s", number, name)
 	}
 
 	fmt.Println()

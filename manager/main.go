@@ -113,7 +113,7 @@ func connectSSH(profile SSHProfile) {
 }
 
 func main() {
-	version := "SSH Manager v0.0.1"
+	version := "SSH Manager v0.0.2"
 	date_time := time.Now().Format("2006-01-02 15:04:05")
 
 	fmt.Println(version)

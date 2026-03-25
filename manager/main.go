@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"golang.org/x/crypto/ssh"
+	"golang.org/x/term"
 )
 
 type SSHProfile struct {
@@ -57,24 +58,58 @@ func connectSSH(profile SSHProfile) {
 	}
 	defer client.Close()
 
-	// Start an interactive session
 	session, err := client.NewSession()
 	if err != nil {
 		log.Fatal("Failed to create session:", err)
 	}
 	defer session.Close()
 
-	// Connect your terminal to the remote server
 	session.Stdin = os.Stdin
 	session.Stdout = os.Stdout
 	session.Stderr = os.Stderr
 
-	// Request a terminal
-	session.RequestPty("xterm", 80, 40, ssh.TerminalModes{})
+	fd := int(os.Stdin.Fd())
 
-	// Start shell
+	// Get actual terminal size so TUI apps (htop, etc.) render correctly
+	width, height, err := term.GetSize(fd)
+	if err != nil {
+		width, height = 80, 40
+	}
+
+	// Put local terminal in raw mode to prevent double echo
+	oldState, err := term.MakeRaw(fd)
+	if err != nil {
+		log.Fatal("Failed to set raw mode:", err)
+	}
+	defer term.Restore(fd, oldState)
+
+	if err := session.RequestPty("xterm-256color", height, width, ssh.TerminalModes{}); err != nil {
+		log.Fatal("Failed to request PTY:", err)
+	}
+
+	// Poll for terminal resize and update the remote PTY
+	done := make(chan struct{})
+	go func() {
+		prevW, prevH := width, height
+		ticker := time.NewTicker(500 * time.Millisecond)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				w, h, err := term.GetSize(fd)
+				if err == nil && (w != prevW || h != prevH) {
+					session.WindowChange(h, w)
+					prevW, prevH = w, h
+				}
+			case <-done:
+				return
+			}
+		}
+	}()
+
 	session.Shell()
 	session.Wait()
+	close(done)
 }
 
 func main() {
